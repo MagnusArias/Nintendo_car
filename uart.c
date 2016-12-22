@@ -8,46 +8,46 @@ void SerialInit(unsigned long int fosc, unsigned int baud, short int bits, short
 	UBRR1H = (unsigned char)(ubrr>>8);
 	UBRR1L = (unsigned char)ubrr;
 
-	UCSR1B = (1<<RXEN1)|(1<<TXEN1);
+	UCSR1B |= (1<<RXEN1)|(1<<TXEN1);
 
 	switch(parity)
 	{
 		case 0:
-			UCSR1C = (0<<UPM10) | (0<<UPM11);
+			UCSR1C |= (0<<UPM10) | (0<<UPM11);
 			break;
 			
 		case 1:
-			UCSR1C = (1<<UPM11);
+			UCSR1C |= (1<<UPM11);
 			break;
 			
 		case 2:
-			UCSR1C = (1<<UPM11) | (1<<UPM10);
+			UCSR1C |= (1<<UPM11) | (1<<UPM10);
 			break;
 	}
 
 	switch(stopBits)
 	{
 		case 1:
-			UCSR1C = (0<<USBS1);
+			UCSR1C |= (0<<USBS1);
 			break;
 			
 		case 2:
-			UCSR1C = (1<<USBS1);
+			UCSR1C |= (1<<USBS1);
 			break;
 	}
 
 	switch(bits)
 	{
 		case 6:
-			UCSR1C = (1<<UCSZ10);
+			UCSR1C |= (1<<UCSZ10);
 			break;
 			
 		case 7:
-			UCSR1C = (1<<UCSZ11);
+			UCSR1C |= (1<<UCSZ11);
 			break;
 			
 		case 8:
-			UCSR1C = (1<<UCSZ11) | (1<<UCSZ10);
+			UCSR1C |= (1<<UCSZ11) | (1<<UCSZ10);
 			break;
 	}
 }
