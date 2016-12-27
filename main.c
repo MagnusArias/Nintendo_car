@@ -1,25 +1,25 @@
-#define F_CPU 16000000UL
-#include <avr/io.h> 
-#include <util/delay.h>  
+#include <avr/io.h>
+#include <util/delay.h>
+#include "uart.h"
 
-#include "usart.h"
-#define FOSC F_CPU
-#define BAUD 115200
-
-int main(void)  
-{  	
-	SerialInit(	FOSC, 	// Szybkosc taktowania zegara		\
-				BAUD, 	// Wymagany baud rate, wartosci 	/ wymagane do  ustawienia rejestru
-				8, 		// 8 bitow danych
-				1, 		// 1 bit stopu
-				0);		// bez parzystosci
-				
-	char rx; 		// bufor do odbierania
+int main(void)
+{
+	char rx[8];
+	SerialInit(12000000, 115200, 2, 8, 1, 0);
+	/* 
+	uzyto kwarcu 12.000MHz:	-U lfuse:w:0xD7:m 
+	predkosc U2X = 1, gdyz daje to mniejsze wartosci bledu (0.2%)
+	8 bitow danych
+	1 bit stopu
+	brak parzystosci
+	*/
+	
+	SerialTransmit("AT+GMR");
 	while(1)
 	{
-		
-	}
-	
-	return 0; 
-} 
-
+		SerialReceive(rx, 8);
+		// w wyniku zwraca 'Ai-Thinker Techn...
+		//					016 11:29:20;K v...'
+				
+	}  
+}

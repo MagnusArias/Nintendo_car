@@ -1,62 +1,66 @@
 #include <avr/io.h>
 #include "uart.h"
 
-void SerialInit(unsigned long int fosc, unsigned int baud, short int bits, short int stopBits, short int parity)
+#define RX_BUFFER_IS_FULL() ((UCSR0A & (1 << RXC0)) == 0)
+#define TX_BUFFER_IS_FULL() ((UCSR0A & (1 << UDRE0)) == 0)
+
+void SerialInit(unsigned long int fosc, unsigned long int baud, unsigned char speed, short int bits, short int stopBits, short int parity)
 {
-	unsigned int ubrr = ((fosc+baud*8UL) / (16UL*baud)-1);
+	UCSR0A |= (1<<U2X0);
+	unsigned int ubrr = 12;
+		
+	UBRR0H = (unsigned char)(ubrr>>8);
+	UBRR0L = (unsigned char)ubrr;
 
-	UBRR1H = (unsigned char)(ubrr>>8);
-	UBRR1L = (unsigned char)ubrr;
-
-	UCSR1B |= (1<<RXEN1)|(1<<TXEN1);
-
+	UCSR0B |= (1<<TXEN0)|(1<<RXEN0);
+	
 	switch(parity)
 	{
 		case 0:
-			UCSR1C |= (0<<UPM10) | (0<<UPM11);
-			break;
-			
+		UCSR0C |= (0<<UPM00) | (0<<UPM01);
+		break;
+		
 		case 1:
-			UCSR1C |= (1<<UPM11);
-			break;
-			
+		UCSR0C |= (1<<UPM01);
+		break;
+		
 		case 2:
-			UCSR1C |= (1<<UPM11) | (1<<UPM10);
-			break;
+		UCSR0C |= (1<<UPM01) | (1<<UPM00);
+		break;
 	}
 
 	switch(stopBits)
 	{
 		case 1:
-			UCSR1C |= (0<<USBS1);
-			break;
-			
+		UCSR0C |= (0<<USBS0);
+		break;
+		
 		case 2:
-			UCSR1C |= (1<<USBS1);
-			break;
+		UCSR0C |= (1<<USBS0);
+		break;
 	}
 
 	switch(bits)
 	{
 		case 6:
-			UCSR1C |= (1<<UCSZ10);
-			break;
-			
+		UCSR0C |= (1<<UCSZ00);
+		break;
+		
 		case 7:
-			UCSR1C |= (1<<UCSZ11);
-			break;
-			
+		UCSR0C |= (1<<UCSZ01);
+		break;
+		
 		case 8:
-			UCSR1C |= (1<<UCSZ11) | (1<<UCSZ10);
-			break;
+		UCSR0C |= (1<<UCSZ01) | (1<<UCSZ00);
+		break;
 	}
 }
 
 void SerialTransmitChar(unsigned char data)
 {
-	while (!(UCSR1A & (1<<UDRE1)));
+	while (TX_BUFFER_IS_FULL());
 
-	UDR1 = data;
+	UDR0 = data;
 }
 
 void SerialTransmit(unsigned char s[])
@@ -72,15 +76,39 @@ void SerialTransmit(unsigned char s[])
 	}
 	
 	unsigned char k = 0;
-	while(s[k] != 0)
-	{
-		SerialTransmitChar(s[k]);
-		k++;
-	}
+	while(s[k] != '\0')	SerialTransmitChar(s[k++]);
 }
 
-unsigned char SerialReceive(void)
+unsigned char SerialReceiveChar(void)
 {
-	while (!(UCSR1A & (1<<RXC1)));
-	return UDR1;
+	while (RX_BUFFER_IS_FULL());
+	return UDR0;
+}
+
+unsigned char SerialReceive(unsigned char *dest, unsigned char size)
+{
+	unsigned char i = 0;
+	if (size == 0) return 0;
+	
+	while (i < size - 1)
+	{
+		unsigned char c;
+		c = SerialReceiveChar();
+		
+		if (c == '\0')
+		{
+			break;
+		}
+		dest[i] = c;
+		i++;
+	}
+	dest[i] = 0;
+	
+	return i + 1;
+}
+
+void SerialFlush(void)
+{
+	unsigned char dummy;
+	while (UCSR0A & (1<<RXC0)) dummy = UDR0;
 }
