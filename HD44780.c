@@ -9,7 +9,7 @@
 // èrÛd≥o : http://radzio.dxp.pl/hd44780/
 // Data : 24.03.2007
 //-------------------------------------------------------------------------------------------------
-
+#include <stdlib.h>
 #include "HD44780.h"
 //-------------------------------------------------------------------------------------------------
 //
@@ -149,16 +149,19 @@ return _LCD_Read();
 // Funkcja wyúwietlenia napisu na wyswietlaczu.
 //
 //-------------------------------------------------------------------------------------------------
-void LCD_WriteText(char * text)
+void LCD_WriteText(char* text)
 {
-while(*text)
-  LCD_WriteData(*text++);
+	while(*text){
+		if (*text == 0x0D || *text == 0x0A)	LCD_GoTo(0,1);
+		LCD_WriteData(*text++);
+	}
 }
 
 void LCD_WriteInteger(int val)
 {
-	char buffer[17];
-	LCD_WriteText(itoa(val, buffer, 10));
+	char buffer[15];
+	itoa(val, buffer, 10);
+	LCD_WriteText(buffer);
 }
 //-------------------------------------------------------------------------------------------------
 //
@@ -227,7 +230,7 @@ LCD_WriteCommand(HD44780_CLEAR); // czyszczenie zawartosÊi pamieci DDRAM
 LCD_WriteCommand(HD44780_ENTRY_MODE | HD44780_EM_SHIFT_CURSOR | HD44780_EM_INCREMENT);// inkrementaja adresu i przesuwanie kursora
 LCD_WriteCommand(HD44780_DISPLAY_ONOFF | HD44780_DISPLAY_ON | HD44780_CURSOR_OFF | HD44780_CURSOR_NOBLINK); // w≥πcz LCD, bez kursora i mrugania
 
-LCD_WriteText("LCD ready");
+LCD_WriteText("LCD Working!");
 }
 
 // funkcja s≥uøπca do wpisywania w≥asnych znakÛw

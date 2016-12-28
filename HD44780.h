@@ -19,40 +19,40 @@
 // Mo¿na zmieniæ stosownie do potrzeb.
 //
 //-------------------------------------------------------------------------------------------------
-#define LCD_RS_DIR		DDRA
-#define LCD_RS_PORT 	PORTA
-#define LCD_RS_PIN		PINA
-#define LCD_RS			(1 << PA1)
+#define LCD_RS_DIR		DDRC
+#define LCD_RS_PORT 	PORTC
+#define LCD_RS_PIN		PINC
+#define LCD_RS			(1 << PC2)
 
-#define LCD_RW_DIR		DDRA
-#define LCD_RW_PORT		PORTA
-#define LCD_RW_PIN		PINA
-#define LCD_RW			(1 << PA2)
+#define LCD_RW_DIR		DDRC
+#define LCD_RW_PORT		PORTC
+#define LCD_RW_PIN		PINC
+#define LCD_RW			(1 << PD1)
 
-#define LCD_E_DIR		DDRA
-#define LCD_E_PORT		PORTA
-#define LCD_E_PIN		PINA
-#define LCD_E			(1 << PA3)
+#define LCD_E_DIR		DDRC
+#define LCD_E_PORT		PORTC
+#define LCD_E_PIN		PINC
+#define LCD_E			(1 << PC0)
 
-#define LCD_DB4_DIR		DDRA
-#define LCD_DB4_PORT	PORTA
-#define LCD_DB4_PIN		PINA
-#define LCD_DB4			(1 << PA4)
+#define LCD_DB4_DIR		DDRD
+#define LCD_DB4_PORT	PORTD
+#define LCD_DB4_PIN		PIND
+#define LCD_DB4			(1 << PD4)
 
-#define LCD_DB5_DIR		DDRA
-#define LCD_DB5_PORT	PORTA
-#define LCD_DB5_PIN		PINA
-#define LCD_DB5			(1 << PA5)
+#define LCD_DB5_DIR		DDRD
+#define LCD_DB5_PORT	PORTD
+#define LCD_DB5_PIN		PIND
+#define LCD_DB5			(1 << PD5)
 
-#define LCD_DB6_DIR		DDRA
-#define LCD_DB6_PORT	PORTA
-#define LCD_DB6_PIN		PINA
-#define LCD_DB6			(1 << PA6)
+#define LCD_DB6_DIR		DDRD
+#define LCD_DB6_PORT	PORTD
+#define LCD_DB6_PIN		PIND
+#define LCD_DB6			(1 << PD6)
 
-#define LCD_DB7_DIR		DDRA
-#define LCD_DB7_PORT	PORTA
-#define LCD_DB7_PIN		PINA
-#define LCD_DB7			(1 << PA7)
+#define LCD_DB7_DIR		DDRD
+#define LCD_DB7_PORT	PORTD
+#define LCD_DB7_PIN		PIND
+#define LCD_DB7			(1 << PD7)
 
 //-------------------------------------------------------------------------------------------------
 //
@@ -106,7 +106,7 @@ void LCD_WriteCommand(unsigned char);
 unsigned char LCD_ReadStatus(void);
 void LCD_WriteData(unsigned char);
 unsigned char LCD_ReadData(void);
-void LCD_WriteText(char *);
+void LCD_WriteText(char*);
 void LCD_WriteInteger(int);
 void LCD_GoTo(unsigned char, unsigned char);
 void LCD_Clear(void);
