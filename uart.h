@@ -1,7 +1,4 @@
-void SerialInit(unsigned long int 	fosc,
-				unsigned long int 	baud,
-				unsigned char		speed,
-				short int 			bits,
+void SerialInit(short int 			bits,
 				short int 			stopBits,
 				short int 			patity);
 				

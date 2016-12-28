@@ -4,10 +4,10 @@
 #define RX_BUFFER_IS_FULL() ((UCSR0A & (1 << RXC0)) == 0)
 #define TX_BUFFER_IS_FULL() ((UCSR0A & (1 << UDRE0)) == 0)
 
-void SerialInit(unsigned long int fosc, unsigned long int baud, unsigned char speed, short int bits, short int stopBits, short int parity)
+void SerialInit(short int bits, short int stopBits, short int parity)
 {
 	UCSR0A |= (1<<U2X0);
-	unsigned int ubrr = 12;
+	unsigned int ubrr = 12;	//wartosc dla oscylatora 12MHz i  baudrate 115200, wartosc bledu +0.2%
 		
 	UBRR0H = (unsigned char)(ubrr>>8);
 	UBRR0L = (unsigned char)ubrr;
@@ -66,7 +66,7 @@ void SerialTransmitChar(unsigned char data)
 void SerialTransmit(unsigned char s[])
 {
 	unsigned char i;
-	for (i = 0; i < 16; i++){
+	for (i = 0; i < 24; i++){
 		if( s[i] == 0){
 			s[i] 	= 13;	// CR
 			s[i+1] 	= 10;	// LF
@@ -76,7 +76,10 @@ void SerialTransmit(unsigned char s[])
 	}
 	
 	unsigned char k = 0;
-	while(s[k] != '\0')	SerialTransmitChar(s[k++]);
+	 while(s[k] != '\0')
+	 {
+		 SerialTransmitChar(s[k++]);
+	 }
 }
 
 unsigned char SerialReceiveChar(void)
@@ -99,6 +102,7 @@ unsigned char SerialReceive(unsigned char *dest, unsigned char size)
 		{
 			break;
 		}
+		
 		dest[i] = c;
 		i++;
 	}
