@@ -7,7 +7,12 @@
 void SerialInit(short int bits, short int stopBits, short int parity)
 {
 	UCSR0A |= (1<<U2X0);
-	unsigned int ubrr = 12;	//wartosc dla oscylatora 12MHz i  baudrate 115200, wartosc bledu +0.2%
+	unsigned int ubrr = 12;	
+	/*
+		Wartoœæ dla oscylatora 12MHz i baudrate 115200, wartoœæ b³edu wynosi +0.2%
+			Tê wartoœæ nale¿y ustawiæ rêcznie po wyliczeniu jej przy pomocy
+					http://wormfood.net/avrbaudcalc.php
+	*/
 		
 	UBRR0H = (unsigned char)(ubrr>>8);
 	UBRR0L = (unsigned char)ubrr;
@@ -17,41 +22,53 @@ void SerialInit(short int bits, short int stopBits, short int parity)
 	switch(parity)
 	{
 		case 0:
-		UCSR0C |= (0<<UPM00) | (0<<UPM01);
+			UCSR0C |= (0<<UPM00) | (0<<UPM01);
 		break;
 		
 		case 1:
-		UCSR0C |= (1<<UPM01);
+			UCSR0C |= (1<<UPM01);
 		break;
 		
 		case 2:
-		UCSR0C |= (1<<UPM01) | (1<<UPM00);
+			UCSR0C |= (1<<UPM01) | (1<<UPM00);
+		break;
+		
+		default:
+			UCSR0C |= (0<<UPM00) | (0<<UPM01);
 		break;
 	}
 
 	switch(stopBits)
 	{
 		case 1:
-		UCSR0C |= (0<<USBS0);
+			UCSR0C |= (0<<USBS0);
 		break;
 		
 		case 2:
-		UCSR0C |= (1<<USBS0);
+			UCSR0C |= (1<<USBS0);
+		break;
+		
+		default:
+			UCSR0C |= (0<<USBS0);
 		break;
 	}
 
 	switch(bits)
 	{
 		case 6:
-		UCSR0C |= (1<<UCSZ00);
+			UCSR0C |= (1<<UCSZ00);
 		break;
 		
 		case 7:
-		UCSR0C |= (1<<UCSZ01);
+			UCSR0C |= (1<<UCSZ01);
 		break;
 		
 		case 8:
-		UCSR0C |= (1<<UCSZ01) | (1<<UCSZ00);
+			UCSR0C |= (1<<UCSZ01) | (1<<UCSZ00);
+		break;
+		
+		default:
+			UCSR0C |= (1<<UCSZ01) | (1<<UCSZ00);
 		break;
 	}
 }
@@ -76,10 +93,7 @@ void SerialTransmit(unsigned char s[])
 	}
 	
 	unsigned char k = 0;
-	 while(s[k] != '\0')
-	 {
-		 SerialTransmitChar(s[k++]);
-	 }
+	while(s[k] != '\0') SerialTransmitChar(s[k++]);
 }
 
 unsigned char SerialReceiveChar(void)
@@ -98,10 +112,7 @@ unsigned char SerialReceive(unsigned char *dest, unsigned char size)
 		unsigned char c;
 		c = SerialReceiveChar();
 		
-		if (c == '\0')
-		{
-			break;
-		}
+		if (c == '\0') break;
 		
 		dest[i] = c;
 		i++;
