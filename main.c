@@ -1,30 +1,40 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include "HD44780.h"
-#include "uart.h"
+#include "i2c.h"
+#include "lsm303d.h"
 
 int main(void)
 {
 	LCD_Initalize();
-	_delay_ms(1000);
-	LCD_Clear();
+	I2C_SetBitrate(100);
+	LSM303D_Init_I2C();
 	
-	SerialInit(8, 1, 0);
-	SerialTransmit("AT"); // przykladowa komenda do testu komunikacji
-	/* 
-	uzyto kwarcu 12.000MHz:	-U lfuse:w:0xD7:m 
-	8 bitow danych
-	1 bit stopu
-	brak parzystosci
-	*/
+	int bufor[2];
+	int wynikX, wynikY, wynikZ;
 
-	SerialTransmit("AT+GMR");
+
 	while(1)
 	{
-		unsigned char rx[20];
-		SerialReceive(rx, 20);
+		TWI_read_buf( LSM303D_ADDR, OUT_X_H_A , 8, bufor );
+		wynikX = (( (bufor[1])<<8) | (bufor[0]));
+		
+		TWI_read_buf( LSM303D_ADDR, OUT_Y_H_A , 8, bufor );
+		wynikY = (( (bufor[1])<<8) | (bufor[0]));
+
+		TWI_read_buf( LSM303D_ADDR, OUT_Z_H_A , 8, bufor );
+		wynikZ = (( (bufor[1])<<8) | (bufor[0]));
+		
+		LCD_GoTo(0,0);	LCD_WriteText("X:   Y:   Z:");
+		
+		LCD_GoTo(0,1);	LCD_WriteInteger(wynikX);
+		
+		LCD_GoTo(5,1);	LCD_WriteInteger(wynikY);
+		
+		LCD_GoTo(10,1);	LCD_WriteInteger(wynikZ);
+		
+		_delay_ms(50);
 		LCD_Clear();
-		LCD_WriteText(rx);
-		_delay_ms(750);
 	} 
+	
 }
