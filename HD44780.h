@@ -108,6 +108,7 @@ void LCD_WriteData(unsigned char);
 unsigned char LCD_ReadData(void);
 void LCD_WriteText(char*);
 void LCD_WriteInteger(int);
+void LCD_WriteHex(int);
 void LCD_GoTo(unsigned char, unsigned char);
 void LCD_Clear(void);
 void LCD_Home(void);

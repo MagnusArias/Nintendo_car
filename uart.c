@@ -19,17 +19,16 @@ void SerialInit(void)
 	UBRR0H = (unsigned char)(ubrr>>8);
 	UBRR0L = (unsigned char)ubrr;
 
-	UCSR0B |= (1<<TXEN0)|(1<<RXEN0);
+	UCSR0B |=	(1<<TXEN0) | (1<<RXEN0);
 	
-	UCSR0C |= (0<<UPM00) | (0<<UPM01);		// no parity
-	UCSR0C |= (0<<USBS0);					// 1 stop bit
-	UCSR0C |= (1<<UCSZ01) | (1<<UCSZ00);	// 8 data bits
+	UCSR0C |=	(0<<UPM00) | (0<<UPM01) |	// no parity
+				(0<<USBS0) |				// 1 stop bit
+				(1<<UCSZ01)| (1<<UCSZ00);	// 8 data bits
 }
 
 void SerialTransmitChar(unsigned char data)
 {
 	while (TX_BUFFER_IS_FULL());
-
 	UDR0 = data;
 }
 
@@ -60,13 +59,11 @@ unsigned char SerialReceive(unsigned char *dest, unsigned char size)
 	{
 		unsigned char c;
 		c = SerialReceiveChar();
-		
 		if (c == '\0') break;
 		
 		dest[i++] = c;
 	}
 	dest[i] = 0;
-	
 	return i + 1;
 }
 
@@ -74,4 +71,29 @@ void SerialFlush(void)
 {
 	unsigned char dummy;
 	while (UCSR0A & (1<<RXC0)) dummy = UDR0;
+}
+
+void SendStruct( struct sDataPacket *src )
+{
+	char* srcPointer = src;
+
+	char size = sizeof(*src);
+
+	char i;
+	for (i = 0; i < size; i++)
+	{
+		SerialTransmitChar(*srcPointer++);
+	}
+}
+
+void ReceiveStruct( struct sControlPacket *dst, uint8_t size )
+{
+	char* dstPointer = dst;
+
+	char i;
+	for (i = 0; i < size; i++)
+	{
+		*dstPointer = SerialReceiveChar();
+		dstPointer++;
+	}
 }

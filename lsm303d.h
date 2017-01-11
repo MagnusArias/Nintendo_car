@@ -61,10 +61,8 @@
 #define FIFO_CTRL       0x2E            // Rejestr kontrolny bufora FIFO, typu read/write.
 #define FIFO_STAT       0x2F            // Status rejestru bufora FIFO, typu read.
 
-#define WriteCTRL0      0x04            // High-pass filter enabled for click function.
 #define WriteCTRL1      0x27            // Makro wybudzaj¹ce akcelerometr, oraz ustawiaj¹ce odswiezanie na 6.25Hz
-#define WriteCTRL4      0x08            // Accelerometer data-ready signal on INT2.
-#define WriteCTRL5      0               // Makro ustawiajace czêstotliwosc samplowania magnetometru na 3.125Hz
+#define WriteCTRL5      0x84			// TEMP_EN = 1; M_ODR- 6.25 Hz
 #define WriteCTRL7      0xA0            // High-pass filter mode selection: normal mode & Magnetic sensor mode selection: Continuous-conversion mode
 
 void LSM303D_Init_I2C(void)
@@ -74,13 +72,18 @@ void LSM303D_Init_I2C(void)
 	TWI_write(CTRL1);
 	TWI_write(WriteCTRL1);
 	TWI_stop();
+	
+	TWI_start();
+	TWI_write(ADDR_WRITE);
+	TWI_write(CTRL5);
+	TWI_write(WriteCTRL5);
+	TWI_stop();
 		
 	TWI_start();
 	TWI_write(ADDR_WRITE);
 	TWI_write(CTRL7);
 	TWI_write(WriteCTRL7);
 	TWI_stop();
-	
 }
 
 #endif /* LSM303D_H_ */
