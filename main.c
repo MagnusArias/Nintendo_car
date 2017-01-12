@@ -32,7 +32,7 @@ int main(void)
 	sData.__0 = 0;
 	
 	SerialInit();
-	//SerialTransmit(mux);	LCD_WriteText("mux");	SerialReceive(rx, 20);	LCD_WriteText(rx);	_delay_ms(2000);	LCD_Clear();
+	SerialTransmit(mux);	LCD_WriteText("mux");	//SerialReceive(rx, 20);	LCD_WriteText(rx);	_delay_ms(2000);	LCD_Clear();
 	SerialTransmit(mode);	LCD_WriteText("mode ");	//SerialReceive(rx, 20);	LCD_WriteText(rx);	_delay_ms(2000);	LCD_Clear();
 	SerialTransmit(ap);		LCD_WriteText("ap ");	//SerialReceive(rx, 20);	LCD_WriteText(rx);	_delay_ms(2000);	LCD_Clear();
 	SerialTransmit(server);	LCD_WriteText("server ");//SerialReceive(rx, 20);	LCD_WriteText(rx);	_delay_ms(2000);	LCD_Clear();
