@@ -8,9 +8,13 @@
 
 int main(void)
 {	
-	unsigned char mux[] = "AT+CIPMUX=1";
-	unsigned char server[] = "AT+CIPSERVER=1";
-	unsigned char send[] = "AT+CIPSEND=0,17";
+	unsigned char mux[]		= "AT+CIPMUX=1";
+	unsigned char server[]	= "AT+CIPSERVER=1";
+	unsigned char send[]	= "AT+CIPSEND=0,17";
+	
+	unsigned char mode[]	= "AT+CWMODE=1";
+	unsigned char ap[]		= "AT+CWJAP=\"Shin\",\"haslo12345\"";
+	unsigned char cif[]		= "AT+CIFSR";
 	
 	uint8_t bufor[2];
 	
@@ -19,7 +23,7 @@ int main(void)
 	LCD_Initalize();
 	_delay_ms(1000);
 	LCD_Clear();
-	
+	unsigned char rx[40];
 	I2C_SetBitrate(100);
 	LSM303D_Init_I2C();
 	
@@ -28,9 +32,15 @@ int main(void)
 	sData.__0 = 0;
 	
 	SerialInit();
-	SerialTransmit(mux);
-	SerialTransmit(server);
-	SerialTransmit(send);
+	//SerialTransmit(mux);	LCD_WriteText("mux");	SerialReceive(rx, 20);	LCD_WriteText(rx);	_delay_ms(2000);	LCD_Clear();
+	SerialTransmit(mode);	LCD_WriteText("mode ");	//SerialReceive(rx, 20);	LCD_WriteText(rx);	_delay_ms(2000);	LCD_Clear();
+	SerialTransmit(ap);		LCD_WriteText("ap ");	//SerialReceive(rx, 20);	LCD_WriteText(rx);	_delay_ms(2000);	LCD_Clear();
+	SerialTransmit(server);	LCD_WriteText("server ");//SerialReceive(rx, 20);	LCD_WriteText(rx);	_delay_ms(2000);	LCD_Clear();
+	//SerialTransmit(cif);	LCD_WriteText("cif");	SerialReceive(rx, 18);	LCD_WriteText(rx);	_delay_ms(2000);	LCD_Clear();
+	
+	LCD_WriteText("\nPodlaczono!");
+	_delay_ms(2000);
+	LCD_Clear();
 		
 	while(1)
 	{
