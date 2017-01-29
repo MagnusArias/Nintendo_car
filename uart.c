@@ -8,14 +8,21 @@
 
 void SerialInit(void)
 {
-	UCSR0A |= (1<<U2X0);
-	unsigned int ubrr = 19;	
 	/*
-		Wartoœæ dla oscylatora 18.432MHz i baudrate 115200, wartoœæ b³edu wynosi +0.0%
-			Tê wartoœæ nale¿y ustawiæ rêcznie po wyliczeniu jej przy pomocy
-					http://wormfood.net/avrbaudcalc.php
+		Initializes one of the UARTs from AVR. To connect to the ESP8266 we have to:
+			 - baud rate equal to 115200
+			 - 8 data bits
+			 - no parity
+			 - 1 stop bit
+	
+		Value UBRR adjusted for crystal oscillator 18.432MHz and baud rate 115200, error equals 0.0%
+		This value has to be set manually after calculating it using this page:
+		http://wormfood.net/avrbaudcalc.php
 	*/
 	
+	UCSR0A |= (1<<U2X0);
+	unsigned int ubrr = 19;	
+		
 	UBRR0H = (unsigned char)(ubrr>>8);
 	UBRR0L = (unsigned char)ubrr;
 
@@ -28,12 +35,20 @@ void SerialInit(void)
 
 void SerialTransmitChar(unsigned char data)
 {
+	/*
+		Transmits single character
+	*/
+	
 	while (TX_BUFFER_IS_FULL());
 	UDR0 = data;
 }
 
 void SerialTransmit(unsigned char s[])
 {
+	/*
+		Transmits the whole string, adding necessary CR+LF at the end
+	*/
+	
 	uint8_t len = strlen(s);
 	s[len] 	 = 13;	// CR
 	s[len+1] = 10;	// LF
@@ -46,12 +61,28 @@ void SerialTransmit(unsigned char s[])
 
 unsigned char SerialReceiveChar(void)
 {
+	/*
+		Receives and returns single character
+	*/
+	
 	while (RX_BUFFER_IS_FULL());
 	return UDR0;
 }
 
 unsigned char SerialReceive(unsigned char *dest, unsigned char size)
 {
+	/*
+		Receives size-long string and returns the real size of received data
+		Always waits for "size" to receive.
+		If you want to receive 20 bytes data, but you know your data will be greater than 20 bytes,
+		it will receive 20 bytes of data, but the rest will be lost.
+
+		If you want to receive 20 bytes data, but you know your data will be less than 20 bytes,
+		it will wait for another 5 bytes to receive...
+		 
+		... and I don't fucking know why, even with breaking the loop.
+	*/
+	
 	unsigned char i = 0;
 	if (size == 0) return 0;
 	
@@ -69,12 +100,21 @@ unsigned char SerialReceive(unsigned char *dest, unsigned char size)
 
 void SerialFlush(void)
 {
+	/*
+		Flushes the buffer, obviously
+	*/
+	
 	unsigned char dummy;
 	while (UCSR0A & (1<<RXC0)) dummy = UDR0;
 }
 
 void SendStruct( struct sDataPacket *src )
 {
+	/*
+		Sends filled structure to 3DS, char by char
+		that's why I had to add 3 fields (CR+LF+0) to structure 
+	*/
+	
 	char* srcPointer = src;
 
 	char size = sizeof(*src);
@@ -86,14 +126,14 @@ void SendStruct( struct sDataPacket *src )
 	}
 }
 
-void ReceiveStruct( struct sControlPacket *dst, uint8_t size )
+void ReceiveStruct( struct sControlPacket *dst, unsigned char* src, uint8_t size )
 {
 	char* dstPointer = dst;
 
 	char i;
 	for (i = 0; i < size; i++)
 	{
-		*dstPointer = SerialReceiveChar();
+		*dstPointer = src;
 		dstPointer++;
 	}
 }

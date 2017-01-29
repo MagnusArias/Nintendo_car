@@ -2,7 +2,7 @@
  * lsm303d.h
  *
  * Created: 03.01.2017 17:49:33
- *  Author: Magnus
+ *  Author: Przemyslaw Debiec
  */ 
 
 
@@ -58,12 +58,13 @@
 #define OUT_Z_L_A       0x2C
 #define OUT_Z_H_A       0x2D
 
-#define FIFO_CTRL       0x2E            // Rejestr kontrolny bufora FIFO, typu read/write.
-#define FIFO_STAT       0x2F            // Status rejestru bufora FIFO, typu read.
+#define FIFO_CTRL       0x2E            // FIFO buffer control register, read/write
+#define FIFO_STAT       0x2F            // FIFO buffer register status, read-only
 
-#define WriteCTRL1      0x27            // Makro wybudzaj¹ce akcelerometr, oraz ustawiaj¹ce odswiezanie na 6.25Hz
+#define WriteCTRL1      0x27            // Macro to start an accelerometer and set refresh rate on 6.25 Hz
 #define WriteCTRL5      0x84			// TEMP_EN = 1; M_ODR- 6.25 Hz
 #define WriteCTRL7      0xA0            // High-pass filter mode selection: normal mode & Magnetic sensor mode selection: Continuous-conversion mode
+
 
 void LSM303D_Init_I2C(void)
 {

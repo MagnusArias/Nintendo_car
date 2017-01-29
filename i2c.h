@@ -1,3 +1,10 @@
+/*
+ * lsm303d.h
+ *
+ * Created: 03.01.2017 17:49:33
+ *  Author: Przemyslaw Debiec
+ */ 
+
 #define ACK 1
 #define NACK 0
 
