@@ -1,3 +1,5 @@
 Nintendo Car
-Pocz¹tek projektu: piŸdziernik 2016
-Planowany czas ukoñczenia: luty 2017
+PoczÄ…tek projektu: paÅºdziernik 2016
+Planowany czas ukoÅ„czenia: luty 2017
+
+ToDo
